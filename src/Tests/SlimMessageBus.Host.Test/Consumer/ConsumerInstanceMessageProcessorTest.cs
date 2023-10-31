@@ -40,7 +40,7 @@ public class ConsumerInstanceMessageProcessorTest
         await p.ProcessMessage(_transportMessage, headers, default);
 
         // assert
-        _busMock.HandlerMock.Verify(x => x.OnHandle(It.IsAny<SomeRequest>()), Times.Never); // the handler should not be called
+        _busMock.HandlerMock.Verify(x => x.OnHandle(It.IsAny<SomeRequest>(), CancellationToken.None), Times.Never); // the handler should not be called
         _busMock.HandlerMock.VerifyNoOtherCalls();
 
         VerifyProduceResponseNeverCalled();
@@ -64,7 +64,7 @@ public class ConsumerInstanceMessageProcessorTest
         _busMock.SerializerMock.Setup(x => x.Deserialize(typeof(SomeRequest), It.IsAny<byte[]>())).Returns(request);
 
         var ex = new Exception("Something went bad");
-        _busMock.HandlerMock.Setup(x => x.OnHandle(request)).Returns(Task.FromException<SomeResponse>(ex));
+        _busMock.HandlerMock.Setup(x => x.OnHandle(request, CancellationToken.None)).Returns(Task.FromException<SomeResponse>(ex));
 
         // act
         var result = await p.ProcessMessage(_transportMessage, headers, default);
@@ -74,7 +74,7 @@ public class ConsumerInstanceMessageProcessorTest
         result.Exception.Should().BeNull();
         result.Response.Should().BeNull();
 
-        _busMock.HandlerMock.Verify(x => x.OnHandle(request), Times.Once); // handler called once
+        _busMock.HandlerMock.Verify(x => x.OnHandle(request, CancellationToken.None), Times.Once); // handler called once
         _busMock.HandlerMock.VerifyNoOtherCalls();
 
         _busMock.BusMock.Verify(
@@ -197,7 +197,7 @@ public class ConsumerInstanceMessageProcessorTest
 
         var handlerMock = new Mock<IRequestHandler<SomeRequest, SomeResponse>>();
         handlerMock
-            .Setup(x => x.OnHandle(request))
+            .Setup(x => x.OnHandle(request, CancellationToken.None))
             .Returns(Task.FromResult(response));
 
         var requestHandlerInterceptor = new Mock<IRequestHandlerInterceptor<SomeRequest, SomeResponse>>();
@@ -231,7 +231,7 @@ public class ConsumerInstanceMessageProcessorTest
         requestHandlerInterceptor.Verify(x => x.OnHandle(request, It.IsAny<Func<Task<SomeResponse>>>(), It.IsAny<IConsumerContext>()), Times.Once);
         requestHandlerInterceptor.VerifyNoOtherCalls();
 
-        handlerMock.Verify(x => x.OnHandle(request), Times.Once); // handler called once
+        handlerMock.Verify(x => x.OnHandle(request, CancellationToken.None), Times.Once); // handler called once
         handlerMock.VerifyNoOtherCalls();
     }
 
@@ -244,7 +244,7 @@ public class ConsumerInstanceMessageProcessorTest
 
         var handlerMock = new Mock<IRequestHandler<SomeRequestWithoutResponse>>();
         handlerMock
-            .Setup(x => x.OnHandle(request))
+            .Setup(x => x.OnHandle(request, CancellationToken.None))
             .Returns(Task.CompletedTask);
 
         var requestHandlerInterceptor = new Mock<IRequestHandlerInterceptor<SomeRequestWithoutResponse, Void>>();
@@ -280,7 +280,7 @@ public class ConsumerInstanceMessageProcessorTest
         requestHandlerInterceptor.Verify(x => x.OnHandle(request, It.IsAny<Func<Task<Void>>>(), It.IsAny<IConsumerContext>()), Times.Once);
         requestHandlerInterceptor.VerifyNoOtherCalls();
 
-        handlerMock.Verify(x => x.OnHandle(request), Times.Once); // handler called once
+        handlerMock.Verify(x => x.OnHandle(request, CancellationToken.None), Times.Once); // handler called once
         handlerMock.VerifyNoOtherCalls();
     }
 
@@ -426,7 +426,7 @@ public class ConsumerInstanceMessageProcessorTest
         someMessageConsumerMock.Setup(x => x.OnHandle(It.IsAny<SomeMessage>())).Returns(Task.CompletedTask);
         someMessageInterfaceConsumerMock.Setup(x => x.OnHandle(It.IsAny<ISomeMessageMarkerInterface>())).Returns(Task.CompletedTask);
         someDerivedMessageConsumerMock.Setup(x => x.OnHandle(It.IsAny<SomeDerivedMessage>())).Returns(Task.CompletedTask);
-        someRequestMessageHandlerMock.Setup(x => x.OnHandle(It.IsAny<SomeRequest>())).Returns(Task.FromResult(new SomeResponse()));
+        someRequestMessageHandlerMock.Setup(x => x.OnHandle(It.IsAny<SomeRequest>(), CancellationToken.None)).Returns(Task.FromResult(new SomeResponse()));
 
         // act
         var result = await p.ProcessMessage(_transportMessage, mesageHeaders, default);
@@ -469,7 +469,7 @@ public class ConsumerInstanceMessageProcessorTest
 
         if (message is SomeRequest someRequest)
         {
-            someRequestMessageHandlerMock.Verify(x => x.OnHandle(someRequest), Times.Once);
+            someRequestMessageHandlerMock.Verify(x => x.OnHandle(someRequest, CancellationToken.None), Times.Once);
         }
         someRequestMessageHandlerMock.VerifyNoOtherCalls();
     }

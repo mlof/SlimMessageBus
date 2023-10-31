@@ -27,12 +27,12 @@ public class SomeMessageConsumer : IConsumer<SomeMessage>
 
 public class SomeRequestMessageHandler : IRequestHandler<SomeRequest, SomeResponse>
 {
-    public Task<SomeResponse> OnHandle(SomeRequest request)
+    public Task<SomeResponse> OnHandle(SomeRequest request, CancellationToken cancellationToken = default)
         => throw new NotImplementedException(nameof(SomeRequest));
 }
 
 public class SomeRequestWithoutResponseHandler : IRequestHandler<SomeRequestWithoutResponse>
 {
-    public Task OnHandle(SomeRequestWithoutResponse request)
+    public Task OnHandle(SomeRequestWithoutResponse request, CancellationToken cancellationToken = default)
         => throw new NotImplementedException(nameof(SomeRequestWithoutResponse));
 }

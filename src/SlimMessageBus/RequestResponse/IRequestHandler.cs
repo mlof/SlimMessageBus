@@ -12,7 +12,7 @@ public interface IRequestHandler<in TRequest, TResponse>
     /// </summary>
     /// <param name="request">The request message</param>
     /// <returns></returns>
-    Task<TResponse> OnHandle(TRequest request);
+    Task<TResponse> OnHandle(TRequest request, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -26,5 +26,5 @@ public interface IRequestHandler<in TRequest>
     /// </summary>
     /// <param name="request">The request message</param>
     /// <returns></returns>
-    Task OnHandle(TRequest request);
+    Task OnHandle(TRequest request, CancellationToken cancellationToken = default);
 }

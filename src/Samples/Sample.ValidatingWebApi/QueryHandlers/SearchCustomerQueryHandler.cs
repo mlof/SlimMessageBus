@@ -6,7 +6,7 @@ using SlimMessageBus;
 
 public class SearchCustomerQueryHandler : IRequestHandler<SearchCustomerQuery, SearchCustomerResult>
 {
-    public Task<SearchCustomerResult> OnHandle(SearchCustomerQuery request) => Task.FromResult(new SearchCustomerResult
+    public Task<SearchCustomerResult> OnHandle(SearchCustomerQuery request, CancellationToken cancellationToken = default) => Task.FromResult(new SearchCustomerResult
     {
         Items = new[]
             {

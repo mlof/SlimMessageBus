@@ -228,7 +228,7 @@ public class SubtractCommandConsumer : IConsumer<SubtractCommand>
 
 public class MultiplyRequestHandler : IRequestHandler<MultiplyRequest, MultiplyResponse>
 {
-    public async Task<MultiplyResponse> OnHandle(MultiplyRequest request)
+    public async Task<MultiplyResponse> OnHandle(MultiplyRequest request, CancellationToken cancellationToken = default)
     {
         await Task.Delay(50); // Simulate some work
         return new MultiplyResponse { Result = request.Left * request.Right, OperationId = request.OperationId };

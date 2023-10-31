@@ -385,7 +385,7 @@ public class EchoRequestHandler : IRequestHandler<EchoRequest, EchoResponse>
         testMetric.OnCreatedConsumer();
     }
 
-    public Task<EchoResponse> OnHandle(EchoRequest request)
+    public Task<EchoResponse> OnHandle(EchoRequest request, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(new EchoResponse(request.Message));
     }

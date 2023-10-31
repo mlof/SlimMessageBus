@@ -282,7 +282,7 @@ public class RedisMessageBusIt : BaseIntegrationTest<RedisMessageBusIt>
 
     private class EchoRequestHandler : IRequestHandler<EchoRequest, EchoResponse>
     {
-        public Task<EchoResponse> OnHandle(EchoRequest request)
+        public Task<EchoResponse> OnHandle(EchoRequest request, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new EchoResponse { Message = request.Message });
         }

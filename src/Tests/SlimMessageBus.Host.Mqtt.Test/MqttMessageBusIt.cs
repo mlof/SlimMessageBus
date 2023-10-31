@@ -208,7 +208,7 @@ public class MqttMessageBusIt : BaseIntegrationTest<MqttMessageBusIt>
 
     private class EchoRequestHandler : IRequestHandler<EchoRequest, EchoResponse>
     {
-        public Task<EchoResponse> OnHandle(EchoRequest request)
+        public Task<EchoResponse> OnHandle(EchoRequest request, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new EchoResponse(request.Message));
         }

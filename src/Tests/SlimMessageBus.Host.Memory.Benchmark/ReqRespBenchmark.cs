@@ -106,7 +106,7 @@ public record SomeResponse(DateTimeOffset Timestamp, long Id);
 
 public record SomeRequestHandler(TestResult TestResult) : IRequestHandler<SomeRequest, SomeResponse>
 {
-    public Task<SomeResponse> OnHandle(SomeRequest request)
+    public Task<SomeResponse> OnHandle(SomeRequest request, CancellationToken cancellationToken = default)
     {
         TestResult.OnArrived();
         return Task.FromResult(new SomeResponse(DateTimeOffset.Now, request.Id));

@@ -235,7 +235,7 @@ public class MemoryMessageBusIt : BaseIntegrationTest<MemoryMessageBusIt>
 
     internal class EchoRequestHandler : IRequestHandler<EchoRequest, EchoResponse>
     {
-        public Task<EchoResponse> OnHandle(EchoRequest request) =>
+        public Task<EchoResponse> OnHandle(EchoRequest request, CancellationToken cancellationToken = default) =>
             Task.FromResult(new EchoResponse { Message = request.Message });
     }
 }

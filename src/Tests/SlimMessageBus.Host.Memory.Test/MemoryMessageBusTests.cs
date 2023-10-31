@@ -338,7 +338,7 @@ public class MemoryMessageBusTests
         consumer1Mock.InSequence(sequenceOfConsumption).Setup(x => x.OnHandle(m)).CallBase();
 
         var consumer2Mock = new Mock<SomeRequestHandler>(MockBehavior.Strict);
-        consumer2Mock.InSequence(sequenceOfConsumption).Setup(x => x.OnHandle(m)).CallBase();
+        consumer2Mock.InSequence(sequenceOfConsumption).Setup(x => x.OnHandle(m, CancellationToken.None)).CallBase();
 
         _serviceProviderMock.ProviderMock.Setup(x => x.GetService(typeof(SomeRequestConsumer))).Returns(() => consumer1Mock.Object);
         _serviceProviderMock.ProviderMock.Setup(x => x.GetService(typeof(SomeRequestHandler))).Returns(() => consumer2Mock.Object);
@@ -367,7 +367,7 @@ public class MemoryMessageBusTests
         _serviceProviderMock.ProviderMock.Verify(x => x.GetService(typeof(IMessageTypeResolver)), Times.Once);
         _serviceProviderMock.ProviderMock.VerifyNoOtherCalls();
 
-        consumer2Mock.Verify(x => x.OnHandle(m), Times.Once);
+        consumer2Mock.Verify(x => x.OnHandle(m, CancellationToken.None), Times.Once);
         consumer2Mock.VerifyNoOtherCalls();
 
         consumer1Mock.Verify(x => x.OnHandle(m), Times.Once);
@@ -404,7 +404,7 @@ public class MemoryMessageBusTests
         var m = new SomeRequest(Guid.NewGuid());
 
         var consumerMock = new Mock<SomeRequestHandler>();
-        consumerMock.Setup(x => x.OnHandle(m)).ThrowsAsync(new ApplicationException("Bad Request"));
+        consumerMock.Setup(x => x.OnHandle(m, CancellationToken.None)).ThrowsAsync(new ApplicationException("Bad Request"));
 
         _serviceProviderMock.ProviderMock.Setup(x => x.GetService(typeof(SomeRequestHandler))).Returns(() => consumerMock.Object);
 
@@ -454,7 +454,7 @@ public record SomeResponse(Guid Id);
 
 public class SomeRequestHandler : IRequestHandler<SomeRequest, SomeResponse>
 {
-    public virtual Task<SomeResponse> OnHandle(SomeRequest request) => Task.FromResult(new SomeResponse(request.Id));
+    public virtual Task<SomeResponse> OnHandle(SomeRequest request, CancellationToken cancellationToken) => Task.FromResult(new SomeResponse(request.Id));
 }
 
 public class SomeRequestConsumer : IConsumer<SomeRequest>
@@ -466,5 +466,5 @@ public record SomeRequestWithoutResponse(Guid Id) : IRequest;
 
 public class SomeRequestWithoutResponseHandler : IRequestHandler<SomeRequestWithoutResponse>
 {
-    public virtual Task OnHandle(SomeRequestWithoutResponse request) => Task.CompletedTask;
+    public virtual Task OnHandle(SomeRequestWithoutResponse request, CancellationToken cancellationToken = default) => Task.CompletedTask;
 }

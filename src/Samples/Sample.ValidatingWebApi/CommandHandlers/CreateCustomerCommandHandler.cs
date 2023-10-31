@@ -5,7 +5,7 @@ using SlimMessageBus;
 
 public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, CommandResultWithId>
 {
-    public Task<CommandResultWithId> OnHandle(CreateCustomerCommand command)
+    public Task<CommandResultWithId> OnHandle(CreateCustomerCommand command, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(new CommandResultWithId(Guid.NewGuid()));
     }
